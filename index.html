@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShopeeClip — Baixe Vídeos Sem Marca D'água</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --orange: #EE4D2D;
+    --orange-dim: rgba(238,77,45,0.10);
+    --orange-border: rgba(238,77,45,0.22);
+    --bg: #080808;
+    --card: #111111;
+    --border: rgba(255,255,255,0.07);
+    --muted: rgba(255,255,255,0.35);
+    --green: #22C55E;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: #fff; min-height: 100vh; overflow-x: hidden; }
+  body::before { content:''; position:fixed; inset:0; background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"); pointer-events:none; z-index:0; }
+  .glow { position:fixed; top:-200px; left:50%; transform:translateX(-50%); width:700px; height:500px; background:radial-gradient(ellipse,rgba(238,77,45,0.07) 0%,transparent 70%); pointer-events:none; z-index:0; }
+
+  header { position:fixed; top:0; left:0; right:0; z-index:100; border-bottom:1px solid var(--border); background:rgba(8,8,8,0.88); backdrop-filter:blur(20px); }
+  .header-inner { max-width:860px; margin:0 auto; padding:13px 20px; display:flex; align-items:center; justify-content:space-between; }
+  .logo { display:flex; align-items:center; gap:9px; text-decoration:none; }
+  .logo-icon { width:32px; height:32px; background:var(--orange); border-radius:9px; display:flex; align-items:center; justify-content:center; font-family:'Syne',sans-serif; font-weight:800; font-size:12px; color:#fff; }
+  .logo-text { font-family:'Syne',sans-serif; font-weight:800; font-size:15px; color:#fff; }
+  .badge { background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.2); color:var(--green); font-size:11px; font-weight:600; padding:4px 10px; border-radius:100px; }
+
+  main { position:relative; z-index:1; padding-top:90px; }
+
+  .hero { max-width:600px; margin:0 auto; padding:56px 20px 36px; text-align:center; }
+  .hero-tag { display:inline-flex; align-items:center; gap:7px; background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:100px; padding:6px 14px; font-size:12px; color:var(--muted); margin-bottom:26px; }
+  .dot { width:6px; height:6px; border-radius:50%; background:var(--green); animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  h1 { font-family:'Syne',sans-serif; font-size:clamp(30px,6vw,50px); font-weight:800; line-height:1.1; letter-spacing:-1.5px; margin-bottom:14px; }
+  h1 .accent { color:var(--orange); }
+  .hero-sub { font-size:14px; color:var(--muted); line-height:1.7; max-width:400px; margin:0 auto 36px; }
+
+  .stats { display:flex; justify-content:center; gap:28px; margin-bottom:40px; flex-wrap:wrap; }
+  .stat-num { font-family:'Syne',sans-serif; font-size:20px; font-weight:800; }
+  .stat-label { font-size:11px; color:var(--muted); margin-top:2px; }
+
+  .tool { max-width:580px; margin:0 auto; padding:0 20px 56px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:20px; overflow:hidden; }
+  .card-head { padding:18px 22px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; }
+  .card-head-icon { width:36px; height:36px; background:var(--orange-dim); border:1px solid var(--orange-border); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; }
+  .card-head h3 { font-family:'Syne',sans-serif; font-size:14px; font-weight:700; }
+  .card-head p { font-size:12px; color:var(--muted); margin-top:1px; }
+  .card-body { padding:22px; }
+
+  .input-wrap { position:relative; margin-bottom:14px; }
+  textarea { width:100%; resize:none; background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:13px; padding:13px 15px; padding-right:85px; font-family:'DM Sans',sans-serif; font-size:14px; color:#fff; outline:none; transition:border-color .2s; min-height:78px; }
+  textarea:focus { border-color:rgba(238,77,45,.35); box-shadow:0 0 0 3px rgba(238,77,45,.07); }
+  textarea::placeholder { color:rgba(255,255,255,.18); }
+  .btn-paste { position:absolute; right:9px; top:9px; background:rgba(255,255,255,.06); border:1px solid var(--border); border-radius:9px; color:var(--muted); font-size:12px; font-family:'DM Sans',sans-serif; padding:6px 11px; cursor:pointer; transition:all .15s; display:flex; align-items:center; gap:5px; }
+  .btn-paste:hover { background:rgba(255,255,255,.11); color:#fff; }
+
+  .supported { background:rgba(255,255,255,.02); border:1px solid var(--border); border-radius:11px; padding:11px 15px; margin-bottom:14px; }
+  .supported p { font-size:10px; color:var(--muted); margin-bottom:5px; font-weight:600; letter-spacing:.5px; text-transform:uppercase; }
+  .supported code { display:block; font-size:11px; color:rgba(255,255,255,.4); margin:2px 0; font-family:'Courier New',monospace; }
+  .supported code::before { content:'✓ '; color:var(--green); }
+
+  .btn-main { width:100%; background:var(--orange); border:none; border-radius:13px; padding:15px; font-family:'Syne',sans-serif; font-size:15px; font-weight:800; color:#fff; cursor:pointer; transition:all .15s; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 8px 24px rgba(238,77,45,.18); }
+  .btn-main:hover { background:#d44426; transform:translateY(-1px); }
+  .btn-main:active { transform:scale(.98); }
+  .btn-main:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+
+  .steps { margin-top:14px; display:none; }
+  .steps.show { display:block; }
+  .step { display:flex; align-items:center; gap:9px; padding:6px 0; font-size:12px; color:var(--muted); opacity:0; transform:translateY(5px); transition:all .3s; }
+  .step.active { opacity:1; transform:translateY(0); }
+  .step.done { color:var(--green); }
+  .step-dot { width:5px; height:5px; border-radius:50%; background:var(--orange); flex-shrink:0; animation:pulse 1s infinite; }
+  .step.done .step-dot { background:var(--green); animation:none; }
+  .step.active:not(.done) .step-dot { background:var(--orange); }
+
+  .error { margin-top:12px; padding:11px 15px; background:rgba(239,68,68,.07); border:1px solid rgba(239,68,68,.18); border-radius:11px; font-size:13px; color:#f87171; display:none; }
+  .error.show { display:block; }
+
+  /* RESULTADO */
+  .result { display:none; margin-top:18px; background:#161616; border:1px solid var(--orange-border); border-radius:16px; overflow:hidden; }
+  .result.show { display:block; }
+  .result-glow { height:2px; background:linear-gradient(90deg,transparent,var(--orange),transparent); }
+  .result-inner { padding:18px; }
+
+  .video-wrap { width:100%; border-radius:11px; overflow:hidden; background:#000; margin-bottom:14px; max-height:300px; display:flex; align-items:center; justify-content:center; }
+  .video-wrap video { width:100%; max-height:300px; object-fit:contain; }
+
+  .meta-clean { display:flex; align-items:center; gap:8px; background:rgba(34,197,94,.06); border:1px solid rgba(34,197,94,.15); border-radius:10px; padding:10px 14px; margin-bottom:14px; font-size:12px; color:var(--green); }
+
+  .btn-dl { width:100%; background:linear-gradient(135deg,#22C55E,#16A34A); border:none; border-radius:13px; padding:15px; font-family:'Syne',sans-serif; font-size:15px; font-weight:800; color:#fff; cursor:pointer; transition:all .15s; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 8px 24px rgba(34,197,94,.18); text-decoration:none; }
+  .btn-dl:hover { transform:translateY(-1px); box-shadow:0 12px 32px rgba(34,197,94,.28); }
+  .btn-dl:active { transform:scale(.98); }
+
+  .btn-reset { width:100%; margin-top:9px; background:transparent; border:1px solid var(--border); border-radius:13px; padding:11px; font-family:'DM Sans',sans-serif; font-size:13px; color:var(--muted); cursor:pointer; transition:all .15s; }
+  .btn-reset:hover { color:#fff; border-color:rgba(255,255,255,.18); }
+
+  /* FEATURES */
+  .features { max-width:860px; margin:0 auto; padding:0 20px 72px; }
+  .sec-title { font-family:'Syne',sans-serif; font-size:22px; font-weight:800; text-align:center; margin-bottom:6px; }
+  .sec-sub { text-align:center; color:var(--muted); font-size:13px; margin-bottom:28px; }
+  .feat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; }
+  .feat-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px; transition:border-color .2s; }
+  .feat-card:hover { border-color:var(--orange-border); }
+  .feat-icon { font-size:22px; margin-bottom:10px; }
+  .feat-title { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; margin-bottom:5px; }
+  .feat-desc { font-size:12px; color:var(--muted); line-height:1.6; }
+
+  /* HOW TO */
+  .howto { max-width:580px; margin:0 auto; padding:0 20px 72px; }
+  .howto-steps { display:flex; flex-direction:column; gap:10px; margin-top:28px; }
+  .howto-step { display:flex; gap:14px; align-items:flex-start; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; }
+  .howto-num { font-family:'Syne',sans-serif; font-size:20px; font-weight:800; color:var(--orange); flex-shrink:0; }
+  .howto-step h4 { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; margin-bottom:3px; }
+  .howto-step p { font-size:12px; color:var(--muted); line-height:1.5; }
+
+  footer { border-top:1px solid var(--border); padding:22px 20px; text-align:center; }
+  footer p { font-size:11px; color:rgba(255,255,255,.2); }
+
+  .spinner { width:17px; height:17px; border:2px solid rgba(255,255,255,.25); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; display:none; }
+  .spinner.show { display:block; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  @media (max-width:480px) { h1 { font-size:28px; } .stats { gap:18px; } }
+</style>
+</head>
+<body>
+<div class="glow"></div>
+
+<header>
+  <div class="header-inner">
+    <a href="/" class="logo">
+      <div class="logo-icon">SC</div>
+      <span class="logo-text">ShopeeClip</span>
+    </a>
+    <span class="badge">100% Gratuito</span>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="hero-tag">
+      <span class="dot"></span>
+      Remove marca d'água + metadados reais
+    </div>
+    <h1>Baixe vídeos da Shopee.<br><span class="accent">Sem rastros.</span></h1>
+    <p class="hero-sub">Remove marca d'água e limpa os metadados do arquivo. O algoritmo do TikTok e Instagram vai tratar como conteúdo original.</p>
+    <div class="stats">
+      <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Sem marca d'água</div></div>
+      <div class="stat"><div class="stat-num">0</div><div class="stat-label">Metadados mantidos</div></div>
+      <div class="stat"><div class="stat-num">MP4</div><div class="stat-label">Formato universal</div></div>
+    </div>
+  </div>
+
+  <div class="tool">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-head-icon">🎬</div>
+        <div>
+          <h3>Downloader de Vídeo</h3>
+          <p>Cole o link do vídeo da Shopee abaixo</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="input-wrap">
+          <textarea id="urlInput" placeholder="Cole o link aqui...&#10;Ex: https://sv.shopee.com.br/share-video/xxxxx" rows="3"></textarea>
+          <button class="btn-paste" onclick="pasteLink()">📋 Colar</button>
+        </div>
+
+        <div class="supported">
+          <p>Links suportados</p>
+          <code>sv.shopee.com.br/share-video/xxx</code>
+          <code>br.shp.ee/xxx</code>
+          <code>s.shopee.com.br/xxx</code>
+        </div>
+
+        <button class="btn-main" id="btnMain" onclick="process()">
+          <span id="btnIcon">⬇️</span>
+          <span id="btnText">Baixar Sem Marca D'água</span>
+          <div class="spinner" id="spinner"></div>
+        </button>
+
+        <div class="steps" id="steps">
+          <div class="step" id="s1"><div class="step-dot"></div>Verificando link...</div>
+          <div class="step" id="s2"><div class="step-dot"></div>Extraindo vídeo original da Shopee...</div>
+          <div class="step" id="s3"><div class="step-dot"></div>Removendo marca d'água...</div>
+          <div class="step" id="s4"><div class="step-dot"></div>Limpando metadados do arquivo...</div>
+          <div class="step" id="s5"><div class="step-dot"></div>Preparando download...</div>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="result" id="result">
+          <div class="result-glow"></div>
+          <div class="result-inner">
+            <div class="video-wrap">
+              <video id="player" controls playsinline></video>
+            </div>
+            <div class="meta-clean">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              Metadados removidos — encoder, handler_name e tags de origem eliminados ✓
+            </div>
+            <a id="btnDl" class="btn-dl" download>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Salvar Vídeo Sem Metadados
+            </a>
+            <button class="btn-reset" onclick="reset()">Baixar outro vídeo</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="features">
+    <h2 class="sec-title">Por que usar o ShopeeClip?</h2>
+    <p class="sec-sub">A única ferramenta que realmente limpa os metadados</p>
+    <div class="feat-grid">
+      <div class="feat-card"><div class="feat-icon">🚫</div><div class="feat-title">Sem Marca D'água</div><div class="feat-desc">Vídeo limpo, sem logo da Shopee, pronto para repostar.</div></div>
+      <div class="feat-card"><div class="feat-icon">🧹</div><div class="feat-title">Metadados Removidos</div><div class="feat-desc">Remove encoder, handler_name e tags de origem do arquivo MP4.</div></div>
+      <div class="feat-card"><div class="feat-icon">📱</div><div class="feat-title">Funciona no Celular</div><div class="feat-desc">100% mobile. Baixe direto pelo celular sem instalar nada.</div></div>
+      <div class="feat-card"><div class="feat-icon">🔒</div><div class="feat-title">Privado</div><div class="feat-desc">Arquivos temporários deletados após o download. Zero armazenamento.</div></div>
+      <div class="feat-card"><div class="feat-icon">⚡</div><div class="feat-title">Rápido</div><div class="feat-desc">Processamento em segundos. Sem fila, sem espera.</div></div>
+      <div class="feat-card"><div class="feat-icon">💸</div><div class="feat-title">Gratuito</div><div class="feat-desc">Sem planos, sem limite de downloads, sem cadastro.</div></div>
+    </div>
+  </div>
+
+  <div class="howto">
+    <h2 class="sec-title">Como usar</h2>
+    <p class="sec-sub">3 passos simples</p>
+    <div class="howto-steps">
+      <div class="howto-step"><div class="howto-num">1</div><div><h4>Copie o link do vídeo</h4><p>No app da Shopee, abra o produto com vídeo → Compartilhar → Copiar Link.</p></div></div>
+      <div class="howto-step"><div class="howto-num">2</div><div><h4>Cole e clique em baixar</h4><p>Cole o link no campo acima e clique em Baixar. O sistema processa automaticamente.</p></div></div>
+      <div class="howto-step"><div class="howto-num">3</div><div><h4>Salve e poste</h4><p>Clique em Salvar. O arquivo vem sem metadados, pronto para TikTok e Instagram.</p></div></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p>© 2025 ShopeeClip • Use com responsabilidade e respeite os criadores originais.</p>
+</footer>
+
+<script>
+  let currentVideoUrl = null
+
+  function sleep(ms) { return new Promise(r => setTimeout(r, ms)) }
+
+  function isShopee(url) {
+    return url.includes('shopee') || url.includes('shp.ee')
+  }
+
+  async function pasteLink() {
+    try {
+      const t = await navigator.clipboard.readText()
+      if (t) { document.getElementById('urlInput').value = t; hideError() }
+    } catch { document.getElementById('urlInput').focus() }
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('error')
+    el.textContent = msg
+    el.classList.add('show')
+  }
+
+  function hideError() {
+    document.getElementById('error').classList.remove('show')
+  }
+
+  function setLoading(on) {
+    document.getElementById('btnMain').disabled = on
+    document.getElementById('spinner').classList.toggle('show', on)
+    document.getElementById('btnIcon').style.display = on ? 'none' : 'inline'
+    document.getElementById('btnText').textContent = on ? 'Processando...' : "Baixar Sem Marca D'água"
+  }
+
+  function activateStep(id, done = false) {
+    const el = document.getElementById(id)
+    el.classList.add('active')
+    if (done) el.classList.add('done')
+  }
+
+  function reset() {
+    document.getElementById('urlInput').value = ''
+    document.getElementById('result').classList.remove('show')
+    document.getElementById('steps').classList.remove('show')
+    hideError()
+    ;['s1','s2','s3','s4','s5'].forEach(id => {
+      const el = document.getElementById(id)
+      el.classList.remove('active','done')
+    })
+    document.getElementById('player').src = ''
+    document.getElementById('btnDl').href = '#'
+    currentVideoUrl = null
+  }
+
+  async function process() {
+    const url = document.getElementById('urlInput').value.trim()
+    if (!url) { showError('Cole o link do vídeo da Shopee acima.'); return }
+    if (!isShopee(url)) { showError('Link inválido. Use um link da Shopee.'); return }
+
+    hideError()
+    setLoading(true)
+    document.getElementById('steps').classList.add('show')
+    document.getElementById('result').classList.remove('show')
+
+    try {
+      await sleep(500); activateStep('s1', true)
+      await sleep(500); activateStep('s2')
+
+      // Chama o backend para extrair a URL do vídeo
+      const res = await fetch('/api/process', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      })
+
+      const data = await res.json()
+      if (!res.ok || !data.videoUrl) throw new Error(data.error || 'Não foi possível extrair o vídeo.')
+
+      currentVideoUrl = data.videoUrl
+      activateStep('s2', true)
+
+      await sleep(500); activateStep('s3', true)
+      await sleep(600); activateStep('s4', true)
+      await sleep(400); activateStep('s5', true)
+
+      // URL de download — backend baixa, limpa e entrega
+      const dlUrl = `/api/download?url=${encodeURIComponent(currentVideoUrl)}`
+
+      // Preview no player (via download endpoint)
+      document.getElementById('player').src = dlUrl
+      document.getElementById('btnDl').href = dlUrl
+      document.getElementById('btnDl').download = `shopeeclip-${Date.now()}.mp4`
+
+      document.getElementById('result').classList.add('show')
+
+    } catch (err) {
+      showError(err.message || 'Erro ao processar. Tente novamente.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  document.getElementById('urlInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); process() }
+  })
+</script>
+</body>
+</html>
